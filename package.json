@@ -1,0 +1,26 @@
+{
+  "name": "ddd-typescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^28.0.3",
+    "ts-jest": "^28.0.1",
+    "typescript": "^4.6.4"
+  },
+  "scripts": {
+    "test": "jest --config ./jest.config.js",
+    "test:watch": "jest --config ./jest.config.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benjaminb-/ddd-typescript.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/benjaminb-/ddd-typescript/issues"
+  },
+  "homepage": "https://github.com/benjaminb-/ddd-typescript#readme"
+}
