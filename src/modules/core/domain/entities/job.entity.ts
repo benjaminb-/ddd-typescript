@@ -1,5 +1,5 @@
 import { AggregateRoot } from "../../../../shared/domain/aggregate-root";
-import { ID } from "../value-objects/id.value-object";
+import { ID } from "../../../../shared/domain/id.value-object";
 
 export interface JobProps {
   id: ID;
@@ -11,6 +11,10 @@ export interface JobProps {
 export class Job extends AggregateRoot<JobProps> {
   private constructor(props: JobProps, id?: string) {
     super(props, id);
+  }
+
+  get id(): string {
+    return this.props.id.value;
   }
 
   get name(): string {
@@ -36,6 +40,10 @@ export class Job extends AggregateRoot<JobProps> {
   }
 
   public addEmployeeId(id: ID): void {
+    if (this.props.employeeIds.map((e) => e.value).includes(id.value)) {
+      throw new Error("Employee already assigned to this job");
+    }
+
     this.props.employeeIds.push(id);
   }
 }

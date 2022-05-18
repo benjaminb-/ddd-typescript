@@ -1,8 +1,8 @@
-import { Employee } from "../modules/employees/domain/entities/employee.entity";
-import { Job } from "../modules/employees/domain/entities/job.entity";
-import { EmployeeCreated } from "../modules/employees/domain/events/employee-created.event";
-import { Email } from "../modules/employees/domain/value-objects/email.value-object";
-import { ID } from "../modules/employees/domain/value-objects/id.value-object";
+import { ID } from "../../../shared/domain/id.value-object";
+import { Employee } from "../domain/entities/employee.entity";
+import { Job } from "../domain/entities/job.entity";
+import { EmployeeCreated } from "../domain/events/employee-created.event";
+import { Email } from "../domain/value-objects/email.value-object";
 
 test("Create an employee with invalid email, should throw an error", () => {
   expect(() => {

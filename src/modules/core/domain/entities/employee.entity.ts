@@ -1,8 +1,8 @@
 import { AggregateRoot } from "../../../../shared/domain/aggregate-root";
+import { ID } from "../../../../shared/domain/id.value-object";
 import { EmployeeCreated } from "../events/employee-created.event";
 import { EmployeeJobChanged } from "../events/employee-job-changed.event";
 import { Email } from "../value-objects/email.value-object";
-import { ID } from "../value-objects/id.value-object";
 import { Job } from "./job.entity";
 
 interface EmployeeProps {
@@ -16,6 +16,10 @@ interface EmployeeProps {
 export class Employee extends AggregateRoot<EmployeeProps> {
   private constructor(props: EmployeeProps, id?: string) {
     super(props, id);
+  }
+
+  get id(): string {
+    return this.props.id.value;
   }
 
   get firstName(): string {
