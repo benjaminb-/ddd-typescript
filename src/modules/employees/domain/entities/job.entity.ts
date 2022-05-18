@@ -1,13 +1,14 @@
-import { Entity } from "../../../../shared/domain/entity";
+import { AggregateRoot } from "../../../../shared/domain/aggregate-root";
 import { ID } from "../value-objects/id.value-object";
 
 export interface JobProps {
   id: ID;
   name: string;
   level: number;
+  employeeIds: Array<ID>;
 }
 
-export class Job extends Entity<JobProps> {
+export class Job extends AggregateRoot<JobProps> {
   private constructor(props: JobProps, id?: string) {
     super(props, id);
   }
@@ -26,5 +27,15 @@ export class Job extends Entity<JobProps> {
     }
 
     return new Job(props);
+  }
+
+  public delete(job: Job) {
+    if (job.props.employeeIds.length > 0) {
+      throw new Error("Cannot delete job used by employees");
+    }
+  }
+
+  public addEmployeeId(id: ID): void {
+    this.props.employeeIds.push(id);
   }
 }

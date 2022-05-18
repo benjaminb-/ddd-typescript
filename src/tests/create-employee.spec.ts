@@ -6,14 +6,16 @@ import { ID } from "../modules/employees/domain/value-objects/id.value-object";
 
 test("Create an employee with invalid email, should throw an error", () => {
   expect(() => {
+    const employeeId = ID.create();
     const email = Email.create("benben.com") as Email;
     const job = Job.create({
       id: ID.create(),
       name: "Software engineer",
       level: 10,
+      employeeIds: [employeeId],
     });
     Employee.create({
-      id: ID.create(),
+      id: employeeId,
       email,
       firstName: "Ben",
       lastName: "B",
@@ -22,14 +24,16 @@ test("Create an employee with invalid email, should throw an error", () => {
   }).toThrow(Error);
 });
 test("Create an employee with valid email, should return an employee and add an event", () => {
+  const employeeId = ID.create();
   const email = Email.create("ben@ben.com") as Email;
   const job = Job.create({
     id: ID.create(),
     name: "Software engineer",
     level: 10,
+    employeeIds: [employeeId],
   });
   const employee = Employee.create({
-    id: ID.create(),
+    id: employeeId,
     email,
     firstName: "Ben",
     lastName: "B",

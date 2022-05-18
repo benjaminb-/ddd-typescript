@@ -6,22 +6,28 @@ import { Email } from "../modules/employees/domain/value-objects/email.value-obj
 import { ID } from "../modules/employees/domain/value-objects/id.value-object";
 
 test("Change employee job, should update the job and add an event", () => {
+  const employeeId = ID.create();
+
+  const job = Job.create({
+    id: ID.create(),
+    name: "Software engineer",
+    level: 10,
+    employeeIds: [employeeId],
+  });
+
   const employee = Employee.create({
     id: ID.create(),
     email: Email.create("ben@ben.com") as Email,
     firstName: "Ben",
     lastName: "B",
-    job: Job.create({
-      id: ID.create(),
-      name: "Software engineer",
-      level: 10,
-    }),
+    job,
   });
 
   const newJob = Job.create({
     id: ID.create(),
     name: "Junior",
     level: 2,
+    employeeIds: [employeeId],
   }) as Job;
 
   employee.changeJob(newJob);
