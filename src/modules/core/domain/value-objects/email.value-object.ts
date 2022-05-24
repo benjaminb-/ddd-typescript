@@ -13,7 +13,7 @@ export class Email extends ValueObject<EmailProps> {
     super(props);
   }
 
-  public static create(email: string): Email | Error {
+  public static create(email: string): Email {
     if (!/\S+@\S+\.\S+/.test(email)) {
       throw new Error("Email format is invalid");
     }

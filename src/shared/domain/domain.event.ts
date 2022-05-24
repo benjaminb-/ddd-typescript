@@ -1,1 +1,3 @@
-export abstract class DomainEvent {}
+export abstract class DomainEvent {
+  public abstract handle(): void;
+}

@@ -1,8 +1,12 @@
 import { DomainEvent } from "../../../../shared/domain/domain.event";
-import { Employee } from "../entities/employee.entity";
+import { EmployeeProps } from "../entities/employee.entity";
 
 export class EmployeeCreated extends DomainEvent {
-  constructor(employee: Employee) {
+  constructor(employee: EmployeeProps) {
     super();
+  }
+
+  public handle() {
+    // here process something about employee created
   }
 }

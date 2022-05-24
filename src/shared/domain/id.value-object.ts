@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { ValueObject } from "./value-object";
 
 interface IDProps {
@@ -13,7 +14,7 @@ export class ID extends ValueObject<IDProps> {
     super(props);
   }
 
-  public static create(): ID {
-    return new ID({ value: "randstring" });
+  public static create(id?: string): ID {
+    return new ID({ value: id ?? new ObjectId().toHexString() });
   }
 }

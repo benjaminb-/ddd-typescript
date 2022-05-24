@@ -1,16 +1,14 @@
 import { AggregateRoot } from "../../../../shared/domain/aggregate-root";
 import { ID } from "../../../../shared/domain/id.value-object";
 import { EmployeeCreated } from "../events/employee-created.event";
-import { EmployeeJobChanged } from "../events/employee-job-changed.event";
+import { EmployeeInformationUpdated } from "../events/employee-information-updated.event";
 import { Email } from "../value-objects/email.value-object";
-import { Job } from "./job.entity";
 
-interface EmployeeProps {
+export interface EmployeeProps {
   id: ID;
   email: Email;
   firstName: string;
   lastName: string;
-  job: Job;
 }
 
 export class Employee extends AggregateRoot<EmployeeProps> {
@@ -34,27 +32,20 @@ export class Employee extends AggregateRoot<EmployeeProps> {
     return this.props.email.value;
   }
 
-  get job(): Job {
-    return this.props.job;
-  }
-
-  get isSenior(): boolean {
-    return this.job.level > 5;
-  }
-
   public static create(props: EmployeeProps): Employee {
     const employee = new Employee(props);
-    employee.addEvent(new EmployeeCreated(employee));
+    employee.addEvent(new EmployeeCreated(employee.props));
     return employee;
   }
 
-  public updateEmail(email: string): void {
-    this.props.email = Email.create(email) as Email;
-  }
-
-  public changeJob(job: Job): void {
-    const previousJob = this.job;
-    this.props.job = job;
-    super.addEvent(new EmployeeJobChanged(previousJob));
+  public updateInformation(
+    firstName: string,
+    lastName: string,
+    email: string
+  ): void {
+    this.props.firstName = firstName;
+    this.props.lastName = lastName;
+    this.props.email = Email.create(email);
+    this.addEvent(new EmployeeInformationUpdated(this.props));
   }
 }
