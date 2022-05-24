@@ -9,6 +9,8 @@ export interface EmployeeProps {
   email: Email;
   firstName: string;
   lastName: string;
+  hasEnded?: boolean;
+  endedAt?: Date;
 }
 
 export class Employee extends AggregateRoot<EmployeeProps> {
@@ -32,6 +34,14 @@ export class Employee extends AggregateRoot<EmployeeProps> {
     return this.props.email.value;
   }
 
+  get hasEnded(): boolean {
+    return this.props.hasEnded ?? false;
+  }
+
+  get endedAt(): Date | undefined {
+    return this.props.endedAt;
+  }
+
   public static create(props: EmployeeProps): Employee {
     const employee = new Employee(props);
     employee.addEvent(new EmployeeCreated(employee.props));
@@ -47,5 +57,11 @@ export class Employee extends AggregateRoot<EmployeeProps> {
     this.props.lastName = lastName;
     this.props.email = Email.create(email);
     this.addEvent(new EmployeeInformationUpdated(this.props));
+  }
+
+  public endEmployment(endedAt: Date): void {
+    this.props.hasEnded = true;
+    this.props.endedAt = endedAt;
+    // add event employeeended
   }
 }

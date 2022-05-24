@@ -11,6 +11,10 @@ export class MongoEmployeeModel {
   firstName: string;
   lastName: string;
   email: string;
+  employment: {
+    hasEnded: boolean;
+    date?: Date;
+  };
 }
 
 export class EmployeeRepository implements IEmployeeRepository {
@@ -20,6 +24,8 @@ export class EmployeeRepository implements IEmployeeRepository {
       firstName: doc.firstName,
       lastName: doc.firstName,
       email: Email.create(doc.email),
+      hasEnded: doc.employment.hasEnded,
+      endedAt: doc.employment.date,
     });
   }
 
@@ -29,6 +35,10 @@ export class EmployeeRepository implements IEmployeeRepository {
       firstName: entity.firstName,
       lastName: entity.firstName,
       email: entity.email,
+      employment: {
+        hasEnded: entity.hasEnded,
+        date: entity.endedAt,
+      },
     };
   }
 
