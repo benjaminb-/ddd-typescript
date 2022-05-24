@@ -26,7 +26,6 @@ export class EmployeeRepository implements IEmployeeRepository {
       lastName: doc.firstName,
       email: Email.create(doc.email),
       endedAt: doc.employment?.endDate,
-      hasEnded: !!doc.employment?.endDate,
     });
   }
 

@@ -9,7 +9,6 @@ export interface EmployeeProps {
   email: Email;
   firstName: string;
   lastName: string;
-  hasEnded?: boolean;
   endedAt?: Date | null;
 }
 
@@ -36,8 +35,9 @@ export class Employee extends AggregateRoot<EmployeeProps> {
     return this.props.email.value;
   }
 
+  // exemple of a generated getter based on other props
   get hasEnded(): boolean {
-    return this.props.hasEnded ?? false;
+    return !!this.endedAt;
   }
 
   get endedAt(): Date | null {
@@ -72,7 +72,6 @@ export class Employee extends AggregateRoot<EmployeeProps> {
     if (!this.hasEnded) {
       throw new Error("employee not ended");
     }
-    this.props.hasEnded = false;
     this.props.endedAt = null;
     // trigger event EmployeeRestored
   }
@@ -82,7 +81,6 @@ export class Employee extends AggregateRoot<EmployeeProps> {
     if (this.hasEnded) {
       throw new Error("employee already ended");
     }
-    this.props.hasEnded = true;
     this.props.endedAt = endedAt;
     // trigger event EmployeeEnded
   }
