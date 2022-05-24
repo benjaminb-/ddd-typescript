@@ -5,10 +5,12 @@ import {
 } from "../dtos/employee.dto";
 import { EmployeeService } from "../services/employee.service";
 
+// API validation is done at controller level with DTO's
+
 export class EmployeesController {
   constructor(private employeeService: EmployeeService) {}
 
-  public list(employee: CreateEmployeeDto): Promise<Array<EmployeeDto>> {
+  public list(): Promise<Array<EmployeeDto>> {
     return this.employeeService.list();
   }
 

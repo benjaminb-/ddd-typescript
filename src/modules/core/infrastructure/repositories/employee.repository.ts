@@ -1,19 +1,20 @@
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
-import { ID } from "../../../shared/domain/id.value-object";
-import { Employee } from "../domain/entities/employee.entity";
-import { Email } from "../domain/value-objects/email.value-object";
-import { IEmployeeRepository } from "./../domain/repositories/employee.repository";
+import { ID } from "../../../../shared/domain/id.value-object";
+import { Employee } from "../../domain/entities/employee.entity";
+import { IEmployeeRepository } from "../../domain/repositories/employee.repository";
+import { Email } from "../../domain/value-objects/email.value-object";
 
 // this is just an exemple of a mongodb model/schema or typegoose model
+// this repository implementation and model has been done after all the domain + application layer code
+// we can easily switch DB system, or totally avoid and think about DB during dev.
 export class MongoEmployeeModel {
   _id: ObjectId;
   firstName: string;
   lastName: string;
   email: string;
   employment: {
-    hasEnded: boolean;
-    date?: Date;
+    endDate?: Date | null;
   };
 }
 
@@ -24,20 +25,19 @@ export class EmployeeRepository implements IEmployeeRepository {
       firstName: doc.firstName,
       lastName: doc.firstName,
       email: Email.create(doc.email),
-      hasEnded: doc.employment.hasEnded,
-      endedAt: doc.employment.date,
+      endedAt: doc.employment?.endDate,
+      hasEnded: !!doc.employment?.endDate,
     });
   }
 
   mapToInfra(entity: Employee): MongoEmployeeModel {
     return {
-      _id: new ObjectId(entity.id),
+      _id: new ObjectId(entity.id as string),
       firstName: entity.firstName,
       lastName: entity.firstName,
       email: entity.email,
       employment: {
-        hasEnded: entity.hasEnded,
-        date: entity.endedAt,
+        endDate: entity.endedAt,
       },
     };
   }
@@ -54,6 +54,16 @@ export class EmployeeRepository implements IEmployeeRepository {
       .lean()
       .exec();
     return this.mapToDomain(document as any);
+  }
+
+  async isEmailExists(email: string): Promise<boolean> {
+    const exists = await mongoose
+      .model("employee")
+      .findOne({ email })
+      .lean()
+      .exec();
+
+    return !!exists;
   }
 
   async save(employee: Employee): Promise<void> {

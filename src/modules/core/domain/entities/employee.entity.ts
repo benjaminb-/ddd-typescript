@@ -1,25 +1,27 @@
 import { AggregateRoot } from "../../../../shared/domain/aggregate-root";
 import { ID } from "../../../../shared/domain/id.value-object";
 import { EmployeeCreated } from "../events/employee-created.event";
-import { EmployeeInformationUpdated } from "../events/employee-information-updated.event";
+import { EmployeeProfileUpdated } from "../events/employee-profile-updated.event";
 import { Email } from "../value-objects/email.value-object";
 
 export interface EmployeeProps {
-  id: ID;
+  id?: ID;
   email: Email;
   firstName: string;
   lastName: string;
   hasEnded?: boolean;
-  endedAt?: Date;
+  endedAt?: Date | null;
 }
 
 export class Employee extends AggregateRoot<EmployeeProps> {
-  private constructor(props: EmployeeProps, id?: string) {
-    super(props, id);
+  private constructor(props: EmployeeProps) {
+    props.id = ID.create();
+    super(props);
   }
 
-  get id(): string {
-    return this.props.id.value;
+  // here we expose only properties used outside with getters
+  get id(): string | null {
+    return this.props.id?.value || null;
   }
 
   get firstName(): string {
@@ -38,30 +40,50 @@ export class Employee extends AggregateRoot<EmployeeProps> {
     return this.props.hasEnded ?? false;
   }
 
-  get endedAt(): Date | undefined {
-    return this.props.endedAt;
+  get endedAt(): Date | null {
+    return this.props.endedAt ?? null;
   }
 
+  // static method to create
   public static create(props: EmployeeProps): Employee {
     const employee = new Employee(props);
-    employee.addEvent(new EmployeeCreated(employee.props));
+    if (!props.id) {
+      // trigger event if we create and no id, new employee
+      employee.addEvent(new EmployeeCreated(employee.props));
+    }
     return employee;
   }
 
-  public updateInformation(
+  // update the profile
+  public updateProfile(
     firstName: string,
     lastName: string,
-    email: string
+    email: Email
   ): void {
     this.props.firstName = firstName;
     this.props.lastName = lastName;
-    this.props.email = Email.create(email);
-    this.addEvent(new EmployeeInformationUpdated(this.props));
+    this.props.email = email;
+    // trigger event
+    this.addEvent(new EmployeeProfileUpdated(this.props));
   }
 
-  public endEmployment(endedAt: Date): void {
+  public restore(): void {
+    // this validation has a purpose in the domain, so it's integrated in the entity
+    if (!this.hasEnded) {
+      throw new Error("employee not ended");
+    }
+    this.props.hasEnded = false;
+    this.props.endedAt = null;
+    // trigger event EmployeeRestored
+  }
+
+  public end(endedAt: Date): void {
+    // this validation has a purpose in the domain, so it's integrated in the entity
+    if (this.hasEnded) {
+      throw new Error("employee already ended");
+    }
     this.props.hasEnded = true;
     this.props.endedAt = endedAt;
-    // add event employeeended
+    // trigger event EmployeeEnded
   }
 }
