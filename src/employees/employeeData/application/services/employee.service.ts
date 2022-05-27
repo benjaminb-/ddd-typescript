@@ -1,9 +1,9 @@
 import { IEmployeeRepository } from "../../domain/repositories/employee.repository";
 import { Email } from "../../domain/value-objects/email.value-object";
 import { CreateEmployeeDto, UpdateEmployeeDto } from "../dtos/employee.dto";
-import { Employee } from "./../../domain/entities/employee.entity";
-import { EmployeeEmailTldAllowedSpecification } from "./../../domain/specifications/employee-email-tld-allowed.specification";
-import { EmployeeDto } from "./../dtos/employee.dto";
+import { Employee } from "../../domain/entities/employee.entity";
+import { EmployeeEmailTldAllowedSpecification } from "../../domain/specifications/employee-email-tld-allowed.specification";
+import { EmployeeDto } from "../dtos/employee.dto";
 
 export class EmployeeService {
   constructor(private employeeRepository: IEmployeeRepository) {}
