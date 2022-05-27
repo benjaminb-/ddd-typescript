@@ -1,4 +1,5 @@
 import { ValueObject } from "../../../../shared/domain/value-object";
+import { EmployeeEmailTldAllowedSpecification } from "../specifications/employee-email-tld-allowed.specification";
 
 interface EmailProps {
   value: string;
@@ -18,6 +19,13 @@ export class Email extends ValueObject<EmailProps> {
       throw new Error("Email format is invalid");
     }
 
-    return new Email({ value: email });
+    const emailVo = new Email({ value: email });
+
+    const specification = new EmployeeEmailTldAllowedSpecification("test.com");
+    if (!specification.isSatisfiedBy(emailVo)) {
+      throw new Error(".tld not allowed");
+    }
+
+    return emailVo;
   }
 }
