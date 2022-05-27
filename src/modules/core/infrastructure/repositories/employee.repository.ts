@@ -1,7 +1,10 @@
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 import { ID } from "../../../../shared/domain/id.value-object";
-import { Employee } from "../../domain/entities/employee.entity";
+import {
+  Employee,
+  EquipmentAssignment,
+} from "../../domain/entities/employee.entity";
 import { IEmployeeRepository } from "../../domain/repositories/employee.repository";
 import { Email } from "../../domain/value-objects/email.value-object";
 
@@ -16,6 +19,7 @@ export class MongoEmployeeModel {
   employment: {
     endDate?: Date | null;
   };
+  equipmentList: Array<EquipmentAssignment>;
 }
 
 export class EmployeeRepository implements IEmployeeRepository {
@@ -26,6 +30,7 @@ export class EmployeeRepository implements IEmployeeRepository {
       lastName: doc.firstName,
       email: Email.create(doc.email),
       endedAt: doc.employment?.endDate,
+      // TODO: map requipmentList here
     });
   }
 
@@ -38,6 +43,7 @@ export class EmployeeRepository implements IEmployeeRepository {
       employment: {
         endDate: entity.endedAt,
       },
+      equipmentList: entity.listOfEquipments,
     };
   }
 

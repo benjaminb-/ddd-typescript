@@ -2,7 +2,6 @@ import { IEmployeeRepository } from "../../domain/repositories/employee.reposito
 import { Email } from "../../domain/value-objects/email.value-object";
 import { CreateEmployeeDto, UpdateEmployeeDto } from "../dtos/employee.dto";
 import { Employee } from "./../../domain/entities/employee.entity";
-import { EmployeeEmailTldAllowedSpecification } from "./../../domain/specifications/employee-email-tld-allowed.specification";
 import { EmployeeDto } from "./../dtos/employee.dto";
 
 export class EmployeeService {
@@ -17,13 +16,7 @@ export class EmployeeService {
     createEmployeeDto: CreateEmployeeDto
   ): Promise<EmployeeDto> {
     await this.checkEmailExists(createEmployeeDto.email);
-
     const email = Email.create(createEmployeeDto.email);
-
-    const specification = new EmployeeEmailTldAllowedSpecification("test.com");
-    if (!specification.isSatisfiedBy(email)) {
-      throw new Error(".tld not allowed");
-    }
 
     const employee = Employee.create({
       email,
@@ -49,12 +42,6 @@ export class EmployeeService {
     // this validation is not in the domain as this is an application purpose
     if (updateEmployeeDto.email !== employee.email) {
       await this.checkEmailExists(updateEmployeeDto.email);
-      const specification = new EmployeeEmailTldAllowedSpecification(
-        "test.com"
-      );
-      if (!specification.isSatisfiedBy(email)) {
-        throw new Error(".tld not allowed");
-      }
     }
 
     employee.updateProfile(
@@ -87,6 +74,36 @@ export class EmployeeService {
     const employee = await this.employeeRepository.findById(employeeId);
 
     employee.restore();
+
+    await this.employeeRepository.save(employee);
+
+    // custom event handler
+    this.handleEvents(employee);
+
+    return this.mapToDto(employee);
+  }
+
+  public async assignEquipment(
+    employeeId: string,
+    equipmentId: string,
+    assignDate: Date
+  ): Promise<EmployeeDto> {
+    const employee = await this.employeeRepository.findById(employeeId);
+
+    employee.assignEquipment(equipmentId, assignDate);
+
+    await this.employeeRepository.save(employee);
+
+    // custom event handler
+    this.handleEvents(employee);
+
+    return this.mapToDto(employee);
+  }
+
+  public async returnEquipment(employeeId: string, equipmentId: string) {
+    const employee = await this.employeeRepository.findById(employeeId);
+
+    employee.returnEquipment(equipmentId);
 
     await this.employeeRepository.save(employee);
 
